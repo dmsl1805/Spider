@@ -22,7 +22,7 @@ pod "Spider"
 
 ## Author
 
-Dmitriy Shulzhenko, dmitriy.shulzhenko@softheme.com
+Dmitriy Shulzhenko, dmsl1805@gmail.com
 
 ## License
 
