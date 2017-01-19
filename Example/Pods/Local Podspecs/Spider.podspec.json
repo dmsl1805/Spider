@@ -1,18 +1,18 @@
 {
   "name": "Spider",
   "version": "0.1.0",
-  "summary": "A short description of Spider.",
+  "summary": "Update models easily",
   "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/Spider",
+  "homepage": "https://github.com/dmsl1805/Spider",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
   },
   "authors": {
-    "Dmitriy Shulzhenko": "dmitriy.shulzhenko@softheme.com"
+    "Dmitriy Shulzhenko": "dmsl1805@gmail.com"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/Spider.git",
+    "git": "https://github.com/dmsl1805/Spider.git",
     "tag": "0.1.0"
   },
   "platforms": {
