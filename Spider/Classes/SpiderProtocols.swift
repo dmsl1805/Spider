@@ -16,9 +16,11 @@ import Foundation
     case downloadData
     //    case writeData
 }
-// Storage that will be used to update model
 
-@objc public protocol TempObjectStorageProtocol: class{} //ObjectWithPrimaryKeyProtocol { }
+// This is your storage for any network responce
+// Storage will be used to update model
+
+@objc public protocol TempObjectStorageProtocol: class{}
 
 
 // Entity object. Can be subclass of NSManagedObject, or smth else

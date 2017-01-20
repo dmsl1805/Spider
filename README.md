@@ -24,6 +24,30 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Requirements
 
+To use Spider you have to conform these protocols
+
+```swift
+// This is your storage for any network responce
+// Storage will be used to update model
+
+@objc public protocol TempObjectStorageProtocol: class{}
+```
+```swift
+// Entity object. Can be subclass of NSManagedObject, or smth else
+
+@objc public protocol EntityProtocol {
+
+@objc static var entityName: String { get }
+
+// Entity that contains some data (NSData, Image, ets.)
+
+@objc optional var dataRemoutePaths: [String] { get }
+
+@objc optional var dataNames: [String] { get }
+
+}
+```
+
 ## Installation
 
 Spider is available through [CocoaPods](http://cocoapods.org). To install
