@@ -5,15 +5,17 @@
 [![License](https://img.shields.io/cocoapods/l/Spider.svg?style=flat)](http://cocoapods.org/pods/Spider)
 [![Platform](https://img.shields.io/cocoapods/p/Spider.svg?style=flat)](http://cocoapods.org/pods/Spider)
 
+## Update your model more easily. With cleaner architecture in your project.
+
 ## Example
-// Update your model more easily. Clean architecture.
 
 self.spider = Spider<Forecast>(persistentStorageController,
-networkController: networkController,
-request: forecastUpdateHTTPRequest)
+                               networkController: networkController,
+                               request: forecastUpdateHTTPRequest)
 self.spider.delegate = self
 
 //sends http request, handles response, deletes old data and writes a new one
+
 self.spider.sendRequest().deleteInfo().writeInfo().execute()
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
