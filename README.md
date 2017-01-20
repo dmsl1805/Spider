@@ -10,9 +10,9 @@
 ## Example
 ```swift
 // Swift
-self.spider = Spider<Forecast>(persistentStorageController,
-                               networkController: networkController,
-                               request: forecastUpdateHTTPRequest)
+self.spider = Spider<T>(persistentStorageController,
+                        networkController: networkController,
+                        request: forecastUpdateHTTPRequest)
 self.spider.delegate = self
 
 //sends http request, handles response, deletes old data and writes a new one
