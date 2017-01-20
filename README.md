@@ -8,7 +8,8 @@
 ## Update your model more easily. With cleaner architecture in your project.
 
 ## Example
-
+```swift
+// Swift
 self.spider = Spider<Forecast>(persistentStorageController,
                                networkController: networkController,
                                request: forecastUpdateHTTPRequest)
@@ -17,6 +18,7 @@ self.spider.delegate = self
 //sends http request, handles response, deletes old data and writes a new one
 
 self.spider.sendRequest().deleteInfo().writeInfo().execute()
+```
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
