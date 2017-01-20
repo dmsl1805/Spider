@@ -35,22 +35,6 @@ import Foundation
     
 }
 
-// Model for HTTP request.
-// forMethod parameter is used because your request can be different if you want to make local or remoute updates
-
-@objc public protocol HTTPRequestProtocol {
-    
-    @objc optional var httpMethod: String { get }
-    
-    @objc optional var requestURL: String { get }
-    
-    @objc optional var urlParameters: Any { get }
-    
-    @objc optional var bodyParameters: Any { get }
-    
-    @objc optional var completeRequest: URLRequest { get }
-    
-}
 
 @objc public protocol PersistentStorageControllerProtocol {
     
@@ -98,7 +82,7 @@ public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? ,
 
 @objc public protocol NetworkControllerProtocol {
     
-    @objc func executeRequest(_ request: HTTPRequestProtocol,
+    @objc func executeRequest(_ request: URLRequest,
                               response: @escaping NetworkResponseBlock) -> URLSessionTask
     
 //    @objc optional func download(from: String,

@@ -11,7 +11,7 @@ public class Spider<T: EntityProtocol> : NSObject, SpiderProtocol {
     public var queue: OperationQueue
     public var networkController: NetworkControllerProtocol
     public var storageController: PersistentStorageControllerProtocol
-    public var request: HTTPRequestProtocol
+    public var request: URLRequest
     public weak var delegate: SpiderDelegateProtocol?
     
     //You can modify "operations" before calling "execute".
@@ -23,7 +23,7 @@ public class Spider<T: EntityProtocol> : NSObject, SpiderProtocol {
     
     public init(_ storageController: PersistentStorageControllerProtocol,
                 networkController: NetworkControllerProtocol,
-                request: HTTPRequestProtocol,
+                request: URLRequest,
                 delegate: SpiderDelegateProtocol? = nil,
                 queue: OperationQueue? = OperationQueue()) {
         self.storageController = storageController
