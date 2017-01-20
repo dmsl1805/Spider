@@ -37,6 +37,7 @@ import Foundation
     
 }
 
+// Persistant storage controller. E.g. Core data stack controller or other.
 
 @objc public protocol PersistentStorageControllerProtocol {
     

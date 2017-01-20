@@ -47,6 +47,37 @@ To use Spider you have to conform these protocols
 
 }
 ```
+```swift
+// Persistant storage controller. E.g. Core data stack controller or other.
+
+@objc public protocol PersistentStorageControllerProtocol {
+
+@objc optional func update(name: String, with objects: TempObjectStorageProtocol)
+
+@objc optional func remove(name: String, new objects: TempObjectStorageProtocol)
+
+@objc optional func fetchWithoutData(name: String) -> [EntityProtocol]?
+
+@objc optional func write(data dataStore: [TempObjectStorageProtocol], completed:((_ error: Error?) -> Void))
+
+//    @objc func delete(data named: String, completed:((_ error: Error?) -> Void))
+
+@objc optional func get(data named: String) -> Data?
+
+}
+```
+```swift
+// Network manager
+
+public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? , _ error: Error? ) -> (Void)
+
+@objc public protocol NetworkControllerProtocol {
+
+@objc func executeRequest(_ request: URLRequest,
+response: @escaping NetworkResponseBlock) -> URLSessionTask
+
+}
+```
 
 ## Installation
 
