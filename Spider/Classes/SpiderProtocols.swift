@@ -13,45 +13,58 @@ import Foundation
     case writeInfo
     case deleteInfo
     //case deleteData
-    case downloadData
+//    case downloadData
     //    case writeData
 }
 
 // This is your storage for any network responce
 // Storage will be used to update model
 
-@objc public protocol TempObjectStorageProtocol: class{}
-
+@objc public protocol TempObjectStorageProtocol: class{ }
+//
+//@objc protocol DefaultTempObjectStorageProtocol: TempObjectStorageProtocol  {
+//    
+//    var uniqueID: Any { get }
+//    
+//}
 
 // Entity object. Can be subclass of NSManagedObject, or smth else
 
 @objc public protocol EntityProtocol {
     
     @objc static var entityName: String { get }
-        
+
     // Entity that contains some data (NSData, Image, ets.)
         
-    @objc optional var dataRemoutePaths: [String] { get }
-    
-    @objc optional var dataNames: [String] { get }
+//    @objc optional var dataRemoutePaths: [String] { get }
+//    
+//    @objc optional var dataNames: [String] { get }
     
 }
+
+//@objc public protocol DefaultEntityProtocol: EntityProtocol  {
+//
+//    @objc var uniqueID: Any { get }
+//    
+//    @objc static var uniqueIDKey: String { get }
+//
+//}
 
 // Persistant storage controller. E.g. Core data stack controller or other.
 
 @objc public protocol PersistentStorageControllerProtocol {
     
-    @objc optional func update(name: String, with objects: TempObjectStorageProtocol)
+    @objc optional func update(_ entityName: Any, with objects: TempObjectStorageProtocol)
     
-    @objc optional func remove(name: String, new objects: TempObjectStorageProtocol)
+    @objc optional func remove(_ entityName: Any, new objects: TempObjectStorageProtocol)
     
-    @objc optional func fetchWithoutData(name: String) -> [EntityProtocol]?
+//    @objc optional func fetchWithoutData(name: String) -> [EntityProtocol]?
 
-    @objc optional func write(data dataStore: [TempObjectStorageProtocol], completed:((_ error: Error?) -> Void))
+//    @objc optional func write(data dataStore: [TempObjectStorageProtocol], completed:((_ error: Error?) -> Void))
     
     //    @objc func delete(data named: String, completed:((_ error: Error?) -> Void))
     
-    @objc optional func get(data named: String) -> Data?
+//    @objc optional func get(data named: String) -> Data?
     
 //
 //    @objc optional var entitiesCount: Int { get }
@@ -77,6 +90,20 @@ import Foundation
     
 }
 
+//@objc public protocol DefaultPersistentStorageControllerProtocol: PersistentStorageControllerProtocol {
+//    
+//    @objc func getFirst(_ entityName: String) -> EntityProtocol?
+//    
+//    @objc func get(_ entityName: String, withID uniqueID: Any) -> DefaultEntityProtocol?
+//    
+//    @objc func insert(_ entityName: String, withID uniqueID: Any) -> DefaultEntityProtocol
+//    
+//    @objc func getOrInsert(_ entityName: String, withID uniqueID: Any) -> DefaultEntityProtocol
+//    
+//    @objc func fetch(_ entityName: String,
+//                     withPredicate predicate: NSPredicate?,
+//                     andSort sortDescriptors: [NSSortDescriptor]?) -> [DefaultEntityProtocol]?
+//}
 
 // MARK: Network manager
 
@@ -93,6 +120,13 @@ public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? ,
 //    
 }
 
+//@objc public protocol ObjectsParserProtocol {
+//    
+//    @objc func parse(_ objectStore: TempObjectStorageProtocol) -> [EntityProtocol]?
+//    
+//    @objc weak var persistentStorageController: DefaultPersistentStorageControllerProtocol? { get set }
+//    
+//}
 
 // MARK: Model updater
 

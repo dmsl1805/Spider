@@ -1,25 +1,101 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="JA0-ig-HIb">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="Spider_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HJD-cK-dyO">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <items>
+                                    <barButtonItem title="Kiev" id="FPB-hh-xQa">
+                                        <connections>
+                                            <action selector="itemSelected:" destination="vXZ-lx-hvc" id="m2q-ad-te7"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="LM2-qQ-InC"/>
+                                    <barButtonItem title="Minsk" id="0Uk-xh-drS">
+                                        <connections>
+                                            <action selector="itemSelected:" destination="vXZ-lx-hvc" id="66K-zU-CQN"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="sAW-E2-v5g"/>
+                                    <barButtonItem title="London" id="XfM-Nk-Fym">
+                                        <connections>
+                                            <action selector="itemSelected:" destination="vXZ-lx-hvc" id="C4x-PQ-mlb"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="z38-F9-otr">
+                                <rect key="frame" x="0.0" y="64" width="375" height="559"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="VQK-Gu-fOq"/>
+                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="nbi-uQ-BtY"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="HJD-cK-dyO" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="ACP-Ra-axR"/>
+                            <constraint firstAttribute="trailing" secondItem="HJD-cK-dyO" secondAttribute="trailing" id="EjN-gG-Qz7"/>
+                            <constraint firstAttribute="trailing" secondItem="z38-F9-otr" secondAttribute="trailing" id="SNs-Qq-SY8"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="HJD-cK-dyO" secondAttribute="bottom" id="p2P-2E-mMZ"/>
+                            <constraint firstItem="z38-F9-otr" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="rxo-BR-gvZ"/>
+                            <constraint firstItem="HJD-cK-dyO" firstAttribute="top" secondItem="z38-F9-otr" secondAttribute="bottom" id="yAj-lU-Me1"/>
+                            <constraint firstItem="z38-F9-otr" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="zD3-Lx-B9p"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="upe-VP-TpA">
+                        <barButtonItem key="rightBarButtonItem" title="Print current store" id="lxV-Q0-XqK">
+                            <connections>
+                                <action selector="printCurrentStore:" destination="vXZ-lx-hvc" id="4qJ-CF-YQB"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="kievItem" destination="FPB-hh-xQa" id="uev-wP-qlk"/>
+                        <outlet property="londonItem" destination="XfM-Nk-Fym" id="Bmg-H6-BQY"/>
+                        <outlet property="minskItem" destination="0Uk-xh-drS" id="lVm-8Y-wle"/>
+                        <outlet property="tableView" destination="z38-F9-otr" id="8yA-La-lFd"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="42" y="30"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="jQs-pC-tOG">
+            <objects>
+                <navigationController id="JA0-ig-HIb" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ais-JJ-xZS">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="Ael-Oa-Xs5"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qsc-zt-bmg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-671" y="38"/>
         </scene>
     </scenes>
 </document>
