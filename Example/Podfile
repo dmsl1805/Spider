@@ -1,6 +1,6 @@
 use_frameworks!
 
-target 'Spider_Example' do
+target 'Spider_Console_Example' do
   pod 'Spider', :path => '../'
 
   target 'Spider_Tests' do

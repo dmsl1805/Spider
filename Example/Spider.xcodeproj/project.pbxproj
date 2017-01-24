@@ -15,6 +15,11 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		9DF9C253598D3BD06926683B /* Pods_Spider_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02D724909BBDDD23FA61F663 /* Pods_Spider_Tests.framework */; };
+		A399768F1E37993E006F96E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A399768E1E37993E006F96E6 /* AppDelegate.swift */; };
+		A39976911E37993E006F96E6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39976901E37993E006F96E6 /* ViewController.swift */; };
+		A39976941E37993E006F96E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A39976921E37993E006F96E6 /* Main.storyboard */; };
+		A39976961E37993E006F96E6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A39976951E37993E006F96E6 /* Assets.xcassets */; };
+		A39976991E37993E006F96E6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A39976971E37993E006F96E6 /* LaunchScreen.storyboard */; };
 		A3C80CDD1E32597500396B6D /* PersistentStorageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C80CDA1E32597500396B6D /* PersistentStorageController.swift */; };
 		A3C80CDE1E32597500396B6D /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A3C80CDB1E32597500396B6D /* Model.xcdatamodeld */; };
 		A3F260381E364FBB00828F57 /* NetworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F260371E364FBB00828F57 /* NetworkController.swift */; };
@@ -38,7 +43,7 @@
 		3D0CE0A7EE8067D21804DBC7 /* Spider.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Spider.podspec; path = ../Spider.podspec; sourceTree = "<group>"; };
 		51879D38BFF362D77AF6777C /* Pods-Spider_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spider_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Spider_Tests/Pods-Spider_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		552829D2AC2F035C332F17B7 /* Pods-Spider_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spider_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Spider_Tests/Pods-Spider_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		607FACD01AFB9204008FA782 /* Spider_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spider_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		607FACD01AFB9204008FA782 /* Spider_Console_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spider_Console_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		607FACD71AFB9204008FA782 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -49,6 +54,13 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		8CCC6829A240DEFBCC74CC85 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		A399768C1E37993E006F96E6 /* Spider_Weather_App_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spider_Weather_App_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A399768E1E37993E006F96E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A39976901E37993E006F96E6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A39976931E37993E006F96E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A39976951E37993E006F96E6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A39976981E37993E006F96E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A399769A1E37993E006F96E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A3C80CDA1E32597500396B6D /* PersistentStorageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentStorageController.swift; sourceTree = "<group>"; };
 		A3C80CDC1E32597500396B6D /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		A3F260371E364FBB00828F57 /* NetworkController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkController.swift; sourceTree = "<group>"; };
@@ -76,6 +88,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A39976891E37993E006F96E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -83,7 +102,9 @@
 			isa = PBXGroup;
 			children = (
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
-				607FACD21AFB9204008FA782 /* Example for Spider */,
+				A399769E1E379953006F96E6 /* SharedComponents */,
+				A399768D1E37993E006F96E6 /* Spider_Weather_App_Example */,
+				607FACD21AFB9204008FA782 /* Console Example */,
 				607FACE81AFB9204008FA782 /* Tests */,
 				607FACD11AFB9204008FA782 /* Products */,
 				ED69F96EDFE3044C7DA26E53 /* Pods */,
@@ -94,13 +115,14 @@
 		607FACD11AFB9204008FA782 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				607FACD01AFB9204008FA782 /* Spider_Example.app */,
+				607FACD01AFB9204008FA782 /* Spider_Console_Example.app */,
 				607FACE51AFB9204008FA782 /* Spider_Tests.xctest */,
+				A399768C1E37993E006F96E6 /* Spider_Weather_App_Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		607FACD21AFB9204008FA782 /* Example for Spider */ = {
+		607FACD21AFB9204008FA782 /* Console Example */ = {
 			isa = PBXGroup;
 			children = (
 				A3F2603F1E36518B00828F57 /* GlobalConst.swift */,
@@ -115,7 +137,7 @@
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
-			name = "Example for Spider";
+			name = "Console Example";
 			path = Spider;
 			sourceTree = "<group>";
 		};
@@ -163,6 +185,26 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		A399768D1E37993E006F96E6 /* Spider_Weather_App_Example */ = {
+			isa = PBXGroup;
+			children = (
+				A399768E1E37993E006F96E6 /* AppDelegate.swift */,
+				A39976901E37993E006F96E6 /* ViewController.swift */,
+				A39976921E37993E006F96E6 /* Main.storyboard */,
+				A39976951E37993E006F96E6 /* Assets.xcassets */,
+				A39976971E37993E006F96E6 /* LaunchScreen.storyboard */,
+				A399769A1E37993E006F96E6 /* Info.plist */,
+			);
+			path = Spider_Weather_App_Example;
+			sourceTree = "<group>";
+		};
+		A399769E1E379953006F96E6 /* SharedComponents */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = SharedComponents;
+			sourceTree = "<group>";
+		};
 		ED69F96EDFE3044C7DA26E53 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -177,9 +219,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		607FACCF1AFB9204008FA782 /* Spider_Example */ = {
+		607FACCF1AFB9204008FA782 /* Spider_Console_Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Spider_Example" */;
+			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Spider_Console_Example" */;
 			buildPhases = (
 				0872C6602FF8C927A798BD61 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
@@ -192,9 +234,9 @@
 			);
 			dependencies = (
 			);
-			name = Spider_Example;
+			name = Spider_Console_Example;
 			productName = Spider;
-			productReference = 607FACD01AFB9204008FA782 /* Spider_Example.app */;
+			productReference = 607FACD01AFB9204008FA782 /* Spider_Console_Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 		607FACE41AFB9204008FA782 /* Spider_Tests */ = {
@@ -218,13 +260,30 @@
 			productReference = 607FACE51AFB9204008FA782 /* Spider_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A399768B1E37993E006F96E6 /* Spider_Weather_App_Example */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A399769D1E37993E006F96E6 /* Build configuration list for PBXNativeTarget "Spider_Weather_App_Example" */;
+			buildPhases = (
+				A39976881E37993E006F96E6 /* Sources */,
+				A39976891E37993E006F96E6 /* Frameworks */,
+				A399768A1E37993E006F96E6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Spider_Weather_App_Example;
+			productName = Spider_Weather_App_Example;
+			productReference = A399768C1E37993E006F96E6 /* Spider_Weather_App_Example.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		607FACC81AFB9204008FA782 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 0820;
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
@@ -236,6 +295,10 @@
 						CreatedOnToolsVersion = 6.3.1;
 						LastSwiftMigration = 0820;
 						TestTargetID = 607FACCF1AFB9204008FA782;
+					};
+					A399768B1E37993E006F96E6 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -252,8 +315,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				607FACCF1AFB9204008FA782 /* Spider_Example */,
+				607FACCF1AFB9204008FA782 /* Spider_Console_Example */,
 				607FACE41AFB9204008FA782 /* Spider_Tests */,
+				A399768B1E37993E006F96E6 /* Spider_Weather_App_Example */,
 			);
 		};
 /* End PBXProject section */
@@ -273,6 +337,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A399768A1E37993E006F96E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A39976991E37993E006F96E6 /* LaunchScreen.storyboard in Resources */,
+				A39976961E37993E006F96E6 /* Assets.xcassets in Resources */,
+				A39976941E37993E006F96E6 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,12 +468,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A39976881E37993E006F96E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A39976911E37993E006F96E6 /* ViewController.swift in Sources */,
+				A399768F1E37993E006F96E6 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		607FACE71AFB9204008FA782 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 607FACCF1AFB9204008FA782 /* Spider_Example */;
+			target = 607FACCF1AFB9204008FA782 /* Spider_Console_Example */;
 			targetProxy = 607FACE61AFB9204008FA782 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -419,6 +502,22 @@
 				607FACDF1AFB9204008FA782 /* Base */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		A39976921E37993E006F96E6 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A39976931E37993E006F96E6 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		A39976971E37993E006F96E6 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A39976981E37993E006F96E6 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -570,6 +669,45 @@
 			};
 			name = Release;
 		};
+		A399769B1E37993E006F96E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				INFOPLIST_FILE = Spider_Weather_App_Example/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.test.Spider-Weather-App-Example";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A399769C1E37993E006F96E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				INFOPLIST_FILE = Spider_Weather_App_Example/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.test.Spider-Weather-App-Example";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -582,7 +720,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Spider_Example" */ = {
+		607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Spider_Console_Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				607FACF01AFB9204008FA782 /* Debug */,
@@ -599,6 +737,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		A399769D1E37993E006F96E6 /* Build configuration list for PBXNativeTarget "Spider_Weather_App_Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A399769B1E37993E006F96E6 /* Debug */,
+				A399769C1E37993E006F96E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 

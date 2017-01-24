@@ -9,9 +9,8 @@
 import UIKit
 import Spider
 
-class ViewController: UIViewController, SpiderDelegateProtocol, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, SpiderDelegateProtocol {
     
-    @IBOutlet var tableView: UITableView!
     @IBOutlet var londonItem: UIBarButtonItem!
     @IBOutlet var minskItem: UIBarButtonItem!
     @IBOutlet var kievItem: UIBarButtonItem!
@@ -32,7 +31,6 @@ class ViewController: UIViewController, SpiderDelegateProtocol, UITableViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         spider.delegate = self
     }
     
@@ -64,26 +62,10 @@ class ViewController: UIViewController, SpiderDelegateProtocol, UITableViewDeleg
         case .writeInfo:
             let psc = self.spider.storageController as! PersistentStorageController
             self.forecastModel = psc.fetchAllForecast()
-            self.tableView.reloadData()
         default:
             break;
         }
     }
-    
-    
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return forecastModel.count
-    }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = "\(forecastModel[indexPath.row].date)"
-        cell.detailTextLabel?.text = "\(forecastModel[indexPath.row].weather_descr)"
-        return cell
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
+
 }
 

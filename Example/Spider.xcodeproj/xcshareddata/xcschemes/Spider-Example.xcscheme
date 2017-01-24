@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-               BuildableName = "Spider_Example.app"
-               BlueprintName = "Spider_Example"
+               BuildableName = "Spider_Console_Example.app"
+               BlueprintName = "Spider_Console_Example"
                ReferencedContainer = "container:Spider.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -57,8 +57,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "Spider_Example.app"
-            BlueprintName = "Spider_Example"
+            BuildableName = "Spider_Console_Example.app"
+            BlueprintName = "Spider_Console_Example"
             ReferencedContainer = "container:Spider.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -80,8 +80,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "Spider_Example.app"
-            BlueprintName = "Spider_Example"
+            BuildableName = "Spider_Console_Example.app"
+            BlueprintName = "Spider_Console_Example"
             ReferencedContainer = "container:Spider.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -99,8 +99,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "Spider_Example.app"
-            BlueprintName = "Spider_Example"
+            BuildableName = "Spider_Console_Example.app"
+            BlueprintName = "Spider_Console_Example"
             ReferencedContainer = "container:Spider.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

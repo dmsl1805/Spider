@@ -182,7 +182,6 @@ public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? ,
                                 willWrite dataStore: TempObjectStorageProtocol,
                                 forEntity: EntityProtocol)
     
-    
     @objc optional func spider(_ spider: SpiderProtocol,
                                 queuePiority forEntity: EntityProtocol,
                                 dataPath: String) -> Operation.QueuePriority
