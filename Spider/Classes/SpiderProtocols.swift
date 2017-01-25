@@ -183,15 +183,11 @@ public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? ,
                                 forEntity: EntityProtocol)
     
     @objc optional func spider(_ spider: SpiderProtocol,
-                                queuePiority forEntity: EntityProtocol,
-                                dataPath: String) -> Operation.QueuePriority
-    
-    @objc optional func spider(_ spider: SpiderProtocol,
-                                qualityOfService: EntityProtocol,
-                                dataPath: String) -> QualityOfService
+                               queueForOperation: SpiderOperationType,
+                               entityName: Any) -> DispatchQueue
 
-    @objc optional func spider(_ spider: SpiderProtocol,
-                               shouldTerminate operation: SpiderOperationType) -> Bool
+//    @objc optional func spider(_ spider: SpiderProtocol,
+//                               shouldTerminate operation: SpiderOperationType) -> Bool
 }
 
 //@objc protocol ModelUpdaterDataDelegate: ModelUpdaterDelegate {
@@ -210,9 +206,4 @@ public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? ,
 //                 qualityOfService: PersistentEntityProtocol) -> QualityOfService
 //}
 
-@objc public protocol SpiderOperationProtocol {
-    var objectStorage: TempObjectStorageProtocol? { get set }
-    var dependents: [SpiderOperationProtocol]? { get set }
-    func finish()
-}
 
