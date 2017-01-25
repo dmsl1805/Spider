@@ -20,8 +20,7 @@ class NetworkController: NSObject, NetworkControllerProtocol {
             if error == nil {
                 if let data = data {
                     do {
-                        let jsonValue = try JSONSerialization.jsonObject(with: data) as! Dictionary<String, Any>
-                        response(NetworkResponse(jsonValue), nil)
+                        let jsonValue = try JSONSerialization.jsonObject(with: data) as! Dictionary<String, Any>                        response(NetworkResponse(jsonValue), nil)
                     } catch let error {
                         response(nil, error)
                     }

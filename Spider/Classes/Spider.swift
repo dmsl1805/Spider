@@ -5,22 +5,151 @@
 
 import Foundation
 
+@objc public enum SpiderOperationType: Int {
+    case sendRequest
+    case writeInfo
+    case deleteInfo
+    //case postInfo
+    //case downloadData
+    //case writeData
+    //case deleteData
+}
 
-public class Spider: NSObject, SpiderProtocol {
+// This is your storage for any network responce
+// Storage will be used to update model
+
+@objc public protocol TempObjectStorageProtocol: class{ }
+
+
+// Entity object. Can be subclass of NSManagedObject, or smth else
+
+@objc public protocol EntityProtocol {
+    
+    @objc static var entityName: String { get }
+    
+    // Entity that contains some data (NSData, Image, ets.)
+    
+    //    @objc optional var dataRemoutePaths: [String] { get }
+    //
+    //    @objc optional var dataNames: [String] { get }
+    
+}
+
+
+// Persistant storage controller. E.g. Core data stack controller or other.
+
+@objc public protocol PersistentStorageControllerProtocol {
+    
+    @objc optional func update(_ entityName: String, with objects: TempObjectStorageProtocol)
+    
+    @objc optional func remove(_ entityName: String, new objects: TempObjectStorageProtocol)
+    
+    //    @objc optional func fetchWithoutData(name: String) -> [EntityProtocol]?
+    
+    //    @objc optional func write(data dataStore: [TempObjectStorageProtocol], completed:((_ error: Error?) -> Void))
+    
+    //    @objc func delete(data named: String, completed:((_ error: Error?) -> Void))
+    
+    //    @objc optional func get(data named: String) -> Data?
+    
+    //
+    //    @objc optional var entitiesCount: Int { get }
+    //
+    //    @objc optional func entity(atIndex index: Int) -> EntityProtocol
+    //
+    //    @objc optional func index(of entity: EntityProtocol) -> NSNumber?
+    //
+    //    @objc optional func fetch(withName name: String) -> EntityProtocol
+    //
+    //    @objc optional func fetch(withPredicate predicate: NSPredicate?,
+    //                              name: String) -> [EntityProtocol]?
+    //
+    
+}
+
+
+// MARK: Network manager
+
+public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? , _ error: Error? ) -> (Void)
+
+@objc public protocol NetworkControllerProtocol {
+    
+    @objc func executeRequest(_ request: URLRequest, response: @escaping NetworkResponseBlock) -> URLSessionTask
+    
+    //    @objc optional func download(from: String,
+    //                                 response: NetworkDataResponseBlock) -> URLSessionTask
+    //
+}
+
+
+@objc public protocol SpiderDelegateProtocol {
+    
+    @objc optional func spider(_ spider: Spider,
+                               didExecute task: URLSessionTask)
+    
+    @objc optional func spider(_ spider: Spider,
+                               didGet response: TempObjectStorageProtocol?,
+                               error: Error?)
+    
+    @objc optional func spider(_ spider: Spider,
+                               didFinishExecuting operation: SpiderOperationType)
+    
+//    @objc optional func spider(_ spider: Spider,
+//                               didDownload dataStore: TempObjectStorageProtocol?,
+//                               forEntity: EntityProtocol,
+//                               error: Error?)
+//    
+//    @objc optional func spider(_ spider: Spider,
+//                               willWrite dataStore: TempObjectStorageProtocol,
+//                               forEntity: EntityProtocol)
+    
+    @objc optional func spider(_ spider: Spider,
+                               queueForOperation: SpiderOperationType,
+                               entityName: String) -> DispatchQueue
+    
+    //    @objc optional func spider(_ spider: SpiderProtocol,
+    //                               shouldTerminate operation: SpiderOperationType) -> Bool
+}
+
+
+private var objectsStorageAssociationKey: UInt8 = 0
+private var entityNameAssociationKey: UInt8 = 0
+
+private extension DispatchGroup {
+    var objectsStorage: TempObjectStorageProtocol {
+        get {
+            return objc_getAssociatedObject(self, &objectsStorageAssociationKey) as! TempObjectStorageProtocol
+        }
+        set {
+            objc_setAssociatedObject(self, &objectsStorageAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    var entityName: String {
+        get {
+            return objc_getAssociatedObject(self, &entityNameAssociationKey) as! String
+        }
+        set {
+            objc_setAssociatedObject(self, &entityNameAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+}
+
+private let defaultQueueLabel: String = "com.spider.defaultQueue"
+
+public class Spider: NSObject {
     
     public var delegateQueue: DispatchQueue
     public var networkController: NetworkControllerProtocol
     public var storageController: PersistentStorageControllerProtocol
     public var request: URLRequest?
-    public var entityName: String!
     public weak var delegate: SpiderDelegateProtocol?
     
     //You can modify "operations" before calling "execute".
     //But be aware - "operations" will be removed after "execute" was called
     public typealias SpiderOperationBlock = (_ dispatchGroup: DispatchGroup, _ objectsStorage: inout TempObjectStorageProtocol?) -> Void
-
     public lazy var operations = [SpiderOperationBlock]()
     
+
     //    internal lazy var downloadOperations = [SpiderOperation]()
 //    internal lazy var downloadEntities = [T]()
     
@@ -44,18 +173,22 @@ public class Spider: NSObject, SpiderProtocol {
         operations.append{ [unowned self] group, store in
             group.wait()
             group.enter()
-            let task = self.networkController.executeRequest(request ?? self.request!, response: { resp, error in
+            self.queue(forOperation: .sendRequest, entity: group.entityName).async {
+                let task = self.networkController.executeRequest(request ?? self.request!, response: { response, error in
+                    self.delegateQueue.sync {
+                        self.delegate?.spider?(self, didGet: response, error: error)
+                    }
+                    if let resp = response {
+                        group.objectsStorage = resp
+                    }
+                    self.delegateQueue.sync {
+                        self.delegate?.spider?(self, didFinishExecuting: .sendRequest)
+                    }
+                    group.leave()
+                })
                 self.delegateQueue.sync {
-                    self.delegate?.spider?(self, didGet: resp, error: error)
+                    self.delegate?.spider?(self, didExecute: task)
                 }
-                store = resp
-                self.delegateQueue.sync {
-                    self.delegate?.spider?(self, didFinishExecuting: .getInfo)
-                }
-                group.leave()
-            })
-            self.delegateQueue.sync {
-                self.delegate?.spider?(self, didExecute: task)
             }
         }
         
@@ -180,12 +313,16 @@ public class Spider: NSObject, SpiderProtocol {
 
     public func execute(forEntity entityName: String) {
         guard operations.count > 0 else { return }
-        self.entityName = entityName
         let group = DispatchGroup()
+        group.entityName = entityName
         var storage: TempObjectStorageProtocol? = nil
         self.operations.forEach { operation in
             operation(group, &storage)
         }
         operations = [SpiderOperationBlock]()
+    }
+    
+    private func queue(forOperation operation: SpiderOperationType, entity name: String) -> DispatchQueue {
+        return delegate?.spider?(self, queueForOperation: operation, entityName: name) ?? DispatchQueue(label: defaultQueueLabel)
     }
 }

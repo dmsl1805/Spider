@@ -43,7 +43,8 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
         default:
             break
         }
-        spider.sendRequest(forecastUpdateRequest)./*deleteInfo().writeInfo().*/execute(forEntity: Forecast.entityName)
+        /*deleteInfo().writeInfo().*/
+        spider.sendRequest(forecastUpdateRequest).execute(forEntity: Forecast.entityName)
     }
     
     @IBAction func printCurrentStore(_ sender: Any) {

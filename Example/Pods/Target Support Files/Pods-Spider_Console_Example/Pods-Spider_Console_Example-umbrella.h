@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_Spider_ExampleVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_Spider_ExampleVersionString[];
+FOUNDATION_EXPORT double Pods_Spider_Console_ExampleVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_Spider_Console_ExampleVersionString[];
 
