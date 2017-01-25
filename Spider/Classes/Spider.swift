@@ -17,7 +17,7 @@ public class Spider: NSObject, SpiderProtocol {
     
     //You can modify "operations" before calling "execute".
     //But be aware - "operations" will be removed after "execute" was called
-    public typealias SpiderOperationBlock = (_ dispatchGroup: DispatchGroup) -> (Void)
+    public typealias SpiderOperationBlock = (_ dispatchGroup: DispatchGroup, _ objectsStorage: inout TempObjectStorageProtocol?) -> Void
 
     public lazy var operations = [SpiderOperationBlock]()
     
@@ -42,15 +42,14 @@ public class Spider: NSObject, SpiderProtocol {
         
         guard request != nil || self.request != nil else { return self }
         
-        operations.append{ [unowned self] group in
+        operations.append{ [unowned self] group, store in
             group.wait()
             group.enter()
-            
             let task = self.networkController.executeRequest(request ?? self.request!, response: { resp, error in
                 self.delegateQueue.sync {
                     self.delegate?.spider?(self, didGet: resp, error: error)
                 }
-//                operation.objectStorage = resp
+                store = resp
                 self.delegateQueue.sync {
                     self.delegate?.spider?(self, didFinishExecuting: .getInfo)
                 }
@@ -180,10 +179,14 @@ public class Spider: NSObject, SpiderProtocol {
 //        return self
 //    }
 
-//    public func execute(forEntity entityName: Any) {
-//        guard operations.count > 0 else { return }
-//        self.entityName = entityName
-//        self.executionQueue.addOperations(operations, waitUntilFinished: false)
-//        operations = [SpiderOperation]()
-//    }
+    public func execute(forEntity entityName: Any) {
+        guard operations.count > 0 else { return }
+        self.entityName = entityName
+        let group = DispatchGroup()
+        var storage: TempObjectStorageProtocol? = nil
+        self.operations.forEach { operation in
+            operation(group, &storage)
+        }
+        operations = [SpiderOperationBlock]()
+    }
 }

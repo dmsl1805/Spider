@@ -113,7 +113,7 @@ public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? ,
 @objc public protocol NetworkControllerProtocol {
     
     @objc func executeRequest(_ request: URLRequest,
-                              response: @escaping NetworkResponseBlock) -> URLSessionTask
+                              response: NetworkResponseBlock) -> URLSessionTask
     
 //    @objc optional func download(from: String,
 //                                 response: NetworkDataResponseBlock) -> URLSessionTask
