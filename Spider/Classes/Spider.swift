@@ -12,7 +12,7 @@ public class Spider: NSObject, SpiderProtocol {
     public var networkController: NetworkControllerProtocol
     public var storageController: PersistentStorageControllerProtocol
     public var request: URLRequest?
-    public var entityName: Any!
+    public var entityName: String!
     public weak var delegate: SpiderDelegateProtocol?
     
     //You can modify "operations" before calling "execute".
@@ -37,11 +37,10 @@ public class Spider: NSObject, SpiderProtocol {
         super.init()
     }
     
-    
     public func sendRequest(_ request: URLRequest? = nil) -> Spider {
-        
-        guard request != nil || self.request != nil else { return self }
-        
+        guard request != nil || self.request != nil else {
+            return self
+        }
         operations.append{ [unowned self] group, store in
             group.wait()
             group.enter()
@@ -179,7 +178,7 @@ public class Spider: NSObject, SpiderProtocol {
 //        return self
 //    }
 
-    public func execute(forEntity entityName: Any) {
+    public func execute(forEntity entityName: String) {
         guard operations.count > 0 else { return }
         self.entityName = entityName
         let group = DispatchGroup()

@@ -54,9 +54,9 @@ import Foundation
 
 @objc public protocol PersistentStorageControllerProtocol {
     
-    @objc optional func update(_ entityName: Any, with objects: TempObjectStorageProtocol)
+    @objc optional func update(_ entityName: String, with objects: TempObjectStorageProtocol)
     
-    @objc optional func remove(_ entityName: Any, new objects: TempObjectStorageProtocol)
+    @objc optional func remove(_ entityName: String, new objects: TempObjectStorageProtocol)
     
 //    @objc optional func fetchWithoutData(name: String) -> [EntityProtocol]?
 
@@ -113,7 +113,7 @@ public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? ,
 @objc public protocol NetworkControllerProtocol {
     
     @objc func executeRequest(_ request: URLRequest,
-                              response: NetworkResponseBlock) -> URLSessionTask
+                              response: @escaping NetworkResponseBlock) -> URLSessionTask
     
 //    @objc optional func download(from: String,
 //                                 response: NetworkDataResponseBlock) -> URLSessionTask
@@ -184,7 +184,7 @@ public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? ,
     
     @objc optional func spider(_ spider: SpiderProtocol,
                                queueForOperation: SpiderOperationType,
-                               entityName: Any) -> DispatchQueue
+                               entityName: String) -> DispatchQueue
 
 //    @objc optional func spider(_ spider: SpiderProtocol,
 //                               shouldTerminate operation: SpiderOperationType) -> Bool
