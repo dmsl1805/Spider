@@ -16,6 +16,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		9DF9C253598D3BD06926683B /* Pods_Spider_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02D724909BBDDD23FA61F663 /* Pods_Spider_Tests.framework */; };
+		A3406ADF1E391F5200F2B792 /* EmojiLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3406ADE1E391F5200F2B792 /* EmojiLogger.swift */; };
 		A399768F1E37993E006F96E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A399768E1E37993E006F96E6 /* AppDelegate.swift */; };
 		A39976911E37993E006F96E6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39976901E37993E006F96E6 /* ViewController.swift */; };
 		A39976941E37993E006F96E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A39976921E37993E006F96E6 /* Main.storyboard */; };
@@ -57,6 +58,7 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		8CCC6829A240DEFBCC74CC85 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		A3406ADE1E391F5200F2B792 /* EmojiLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiLogger.swift; sourceTree = "<group>"; };
 		A399768C1E37993E006F96E6 /* Spider_Weather_App_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spider_Weather_App_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A399768E1E37993E006F96E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A39976901E37993E006F96E6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -207,6 +209,7 @@
 		A399769E1E379953006F96E6 /* SharedComponents */ = {
 			isa = PBXGroup;
 			children = (
+				A3406ADE1E391F5200F2B792 /* EmojiLogger.swift */,
 			);
 			name = SharedComponents;
 			sourceTree = "<group>";
@@ -458,6 +461,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A3406ADF1E391F5200F2B792 /* EmojiLogger.swift in Sources */,
 				A3F260381E364FBB00828F57 /* NetworkController.swift in Sources */,
 				A3F260401E36518B00828F57 /* GlobalConst.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
@@ -753,6 +757,7 @@
 				A399769C1E37993E006F96E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

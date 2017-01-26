@@ -20,7 +20,8 @@ class NetworkController: NSObject, NetworkControllerProtocol {
             if error == nil {
                 if let data = data {
                     do {
-                        let jsonValue = try JSONSerialization.jsonObject(with: data) as! Dictionary<String, Any>                        response(NetworkResponse(jsonValue), nil)
+                        let jsonValue = try JSONSerialization.jsonObject(with: data) as! Dictionary<String, Any>
+                        response(NetworkResponse(jsonValue), nil)
                     } catch let error {
                         response(nil, error)
                     }
@@ -34,10 +35,14 @@ class NetworkController: NSObject, NetworkControllerProtocol {
     }
     
     func logResponse(_ request: URLRequest, response: URLResponse?, error: Error?) {
-        print("response for: ", request, response ?? error ?? "cannot get any response or error")
+        if let err = error {
+            ePrint(err, "was caused by:", request)
+        } else {
+            iPrint(response ?? "cannot get any response or error", " for: ", request)
+        }
     }
     
     func logRequest(_ request: URLRequest) {
-        print("execute request: ", request)
+        wPrint("execute request: ", request)
     }
 }

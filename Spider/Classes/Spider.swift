@@ -134,11 +134,8 @@ private extension DispatchGroup {
     }
 }
 
-private let defaultQueueLabel: String = "com.spider.defaultQueue"
-
 public class Spider: NSObject {
     
-    public var delegateQueue: DispatchQueue
     public var networkController: NetworkControllerProtocol
     public var storageController: PersistentStorageControllerProtocol
     public var request: URLRequest?
@@ -146,113 +143,79 @@ public class Spider: NSObject {
     
     //You can modify "operations" before calling "execute".
     //But be aware - "operations" will be removed after "execute" was called
-    public typealias SpiderOperationBlock = (_ dispatchGroup: DispatchGroup, _ objectsStorage: inout TempObjectStorageProtocol?) -> Void
+    public typealias SpiderOperationBlock = (_ dispatchGroup: DispatchGroup) -> Void
     public lazy var operations = [SpiderOperationBlock]()
     
+    private lazy var defaultQueue: DispatchQueue = DispatchQueue(label: "com.spider.defaultQueue")
 
     //    internal lazy var downloadOperations = [SpiderOperation]()
 //    internal lazy var downloadEntities = [T]()
     
     public init(_ storageController: PersistentStorageControllerProtocol,
                 networkController: NetworkControllerProtocol,
-                request: URLRequest? = nil,
-                delegate: SpiderDelegateProtocol? = nil,
-                delegateQueue: DispatchQueue = DispatchQueue.main) {
+                request: URLRequest? = nil) {
         self.storageController = storageController
         self.networkController = networkController
         self.request = request
-        self.delegate = delegate
-        self.delegateQueue = delegateQueue
-        super.init()
     }
     
-    public func sendRequest(_ request: URLRequest? = nil) -> Spider {
+    public func sendRequest(_ request: URLRequest? = nil) -> Self {
         guard request != nil || self.request != nil else {
             return self
         }
-        operations.append{ [unowned self] group, store in
+        operations.append{ [unowned self] group in
             group.wait()
             group.enter()
-            self.queue(forOperation: .sendRequest, entity: group.entityName).async {
+            self.queue(forOperation: .sendRequest, entity: group.entityName).sync {
                 let task = self.networkController.executeRequest(request ?? self.request!, response: { response, error in
-                    self.delegateQueue.sync {
-                        self.delegate?.spider?(self, didGet: response, error: error)
-                    }
+//                    self.delegateQueue.async {
+//                        self.delegate?.spider?(self, didGet: response, error: error)
+//                    }
                     if let resp = response {
                         group.objectsStorage = resp
                     }
-                    self.delegateQueue.sync {
-                        self.delegate?.spider?(self, didFinishExecuting: .sendRequest)
-                    }
+//                    self.delegateQueue.async {
+//                        self.delegate?.spider?(self, didFinishExecuting: .sendRequest)
+//                    }
                     group.leave()
                 })
-                self.delegateQueue.sync {
-                    self.delegate?.spider?(self, didExecute: task)
-                }
+//                self.delegateQueue.async {
+//                    self.delegate?.spider?(self, didExecute: task)
+//                }
             }
         }
-        
-//        let op = SpiderOperation { [unowned self] operation in
-//            if let terminate = self.delegate?.spider?(self, shouldTerminate: .getInfo), terminate == true {
-//                self.delegateQueue.addOperation {
-//                    self.delegate?.spider?(self, didFinishExecuting: .getInfo)
-//                }
-//                operation.finish()
-//            }
-//            let task = self.networkController.executeRequest(request ?? self.request!, response: { resp, error in
-//                self.delegateQueue.addOperation {
-//                    self.delegate?.spider?(self, didGet: resp, error: error)
-//                }
-//                operation.objectStorage = resp
-//                self.delegateQueue.addOperation {
-//                    self.delegate?.spider?(self, didFinishExecuting: .getInfo)
-//                }
-//                operation.finish()
-//            })
-//            self.delegateQueue.addOperation {
-//                self.delegate?.spider?(self, didExecute: task)
-//            }
-//        }
-//        //TODO: Allow user suspend task and than execute it
-//        //            let resume = self.delegate?.spider?(self, didExecute: task!, {
-//        //                if case .suspended = task!.state {
-//        //                    task!.resume()
-//        //                }
-//        //            })
-//        //
-//        //            if resume == nil, case .suspended = task!.state {
-//        //                task!.resume()
-//        //            }
-//        if let newDependency = operations.last {
-//            op.addDependency(newDependency)
-//        }
-//        operations.append(op)
         return self
     }
     
-//    public func writeInfo() -> Spider {
-//        let op = SpiderOperation { [unowned self] operation in
-//            self.delegateQueue.addOperation {
-//                if let terminate = self.delegate?.spider?(self, shouldTerminate: .getInfo), terminate == true {
+    public func writeInfo() -> Self {
+        operations.append{ [unowned self] group in
+            group.wait()
+            group.enter()
+            self.queue(forOperation: .writeInfo, entity: group.entityName).sync {
+                self.storageController.update!(group.entityName, with: group.objectsStorage)
+//                self.delegateQueue.async {
 //                    self.delegate?.spider?(self, didFinishExecuting: .writeInfo)
-//                    operation.finish()
 //                }
-//            }
-//            if let store = operation.objectStorage {
-//                self.storageController.update!(self.entityName, with: store)
-//            }
-//            self.delegateQueue.addOperation {
-//                self.delegate?.spider?(self, didFinishExecuting: .writeInfo)
-//            }
-//            operation.finish()
-//        }
-//        if let newDependency = operations.last {
-//            op.addDependency(newDependency)
-//        }
-//        operations.append(op)
-//        return self
-//    }
-    
+                group.leave()
+            }
+        }
+        return self
+    }
+
+    public func deleteInfo() -> Self {
+        operations.append{ [unowned self] group in
+            group.wait()
+            group.enter()
+            self.queue(forOperation: .deleteInfo, entity: group.entityName).sync {
+                self.storageController.remove!(group.entityName, new: group.objectsStorage)
+//                self.delegateQueue.async {
+//                    self.delegate?.spider?(self, didFinishExecuting: .deleteInfo)
+//                }
+                group.leave()
+            }
+        }
+        return self
+    }
 //    public func deleteInfo() -> Spider {
 //        let op = SpiderOperation { [unowned self] (operation) in
 //            self.delegateQueue.addOperation {
@@ -314,15 +277,17 @@ public class Spider: NSObject {
     public func execute(forEntity entityName: String) {
         guard operations.count > 0 else { return }
         let group = DispatchGroup()
-        group.entityName = entityName
-        var storage: TempObjectStorageProtocol? = nil
-        self.operations.forEach { operation in
-            operation(group, &storage)
+        defaultQueue.async { [unowned self] in
+            group.entityName = entityName
+            self.operations.forEach { operation in
+                operation(group)
+            }
+            self.operations = [SpiderOperationBlock]()
         }
-        operations = [SpiderOperationBlock]()
     }
     
     private func queue(forOperation operation: SpiderOperationType, entity name: String) -> DispatchQueue {
-        return delegate?.spider?(self, queueForOperation: operation, entityName: name) ?? DispatchQueue(label: defaultQueueLabel)
+        let queue = delegate?.spider?(self, queueForOperation: operation, entityName: name) ?? defaultQueue
+        return queue
     }
 }

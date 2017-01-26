@@ -15,7 +15,6 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
     @IBOutlet var minskItem: UIBarButtonItem!
     @IBOutlet var kievItem: UIBarButtonItem!
     
-    var forecastModel = [Forecast]()
     var selectedCityID: Int = 0
     var forecastUpdateRequest: URLRequest {
         let url = URL(string: openweatherForecastApiDomain.appending("?id=\(selectedCityID)&APPID=\(openweatherAPPID)&units=metric"))!
@@ -44,7 +43,9 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
             break
         }
         /*deleteInfo().writeInfo().*/
-        spider.sendRequest(forecastUpdateRequest).execute(forEntity: Forecast.entityName)
+        spider.sendRequest(forecastUpdateRequest).deleteInfo().writeInfo().execute(forEntity: Forecast.entityName)
+        
+        
     }
     
     @IBAction func printCurrentStore(_ sender: Any) {
@@ -52,20 +53,20 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
         print(psc.fetchAllForecast())
     }
     
-    func spider(_ spider: SpiderProtocol,
+    func spider(_ spider: Spider,
                 didGet response: TempObjectStorageProtocol?,
                 error: Error?) {
         
     }
     
-    func spider(_ spider: SpiderProtocol, didFinishExecuting operation: SpiderOperationType) {
-        switch operation {
-        case .writeInfo:
-            let psc = self.spider.storageController as! PersistentStorageController
-            self.forecastModel = psc.fetchAllForecast()
-        default:
-            break;
-        }
+    func spider(_ spider: Spider, didFinishExecuting operation: SpiderOperationType) {
+//        switch operation {
+//        case .writeInfo:
+//            let psc = self.spider.storageController as! PersistentStorageController
+//            self.forecastModel = psc.fetchAllForecast()
+//        default:
+//            break;
+//        }
     }
 
 }
