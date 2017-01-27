@@ -76,13 +76,13 @@ class PersistentStorageController: NSObject {
 
 extension PersistentStorageController: PersistentStorageControllerProtocol {
     
-    func update(_ entityName: Any, with objects: TempObjectStorageProtocol) {
-        switch entityName as! String {
+    func update(_ entityName: String, with objects: TempObjectStorageProtocol) {
+        switch entityName {
         case Forecast.entityName:
             let objects = objects as! NetworkResponse
             let list = objects.objects["list"] as! Array<Dictionary<String, Any>>
             list.forEach({ forecast in
-                let entity = insertEntity(entityName as! String) as! Forecast
+                let entity = insertEntity(entityName) as! Forecast
                 let dateTxt = forecast["dt_txt"] as! String
                 let format = DateFormatter()
                 format.dateFormat = "yyyy-mm-dd HH:mm:ss"
@@ -121,8 +121,8 @@ extension PersistentStorageController: PersistentStorageControllerProtocol {
         save()
     }
     
-    func remove(_ entityName: Any, new objects: TempObjectStorageProtocol) {
-        fetch(entityName as! String)?.forEach({[unowned self] entity in
+    func remove(_ entityName: String, new objects: TempObjectStorageProtocol) {
+        fetch(entityName)?.forEach({[unowned self] entity in
             let objectInBg = self.contextStore.background.object(with: (entity as! NSManagedObject).objectID)
             self.contextStore.background.delete(objectInBg)
         })

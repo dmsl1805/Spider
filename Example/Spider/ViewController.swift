@@ -31,6 +31,7 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         spider.delegate = self
+        spider.delegateQueue = DispatchQueue.main
     }
     
     @IBAction func itemSelected(_ sender: UIBarButtonItem) {
@@ -50,16 +51,24 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
     
     @IBAction func printCurrentStore(_ sender: Any) {
         let psc = spider.storageController as! PersistentStorageController
-        print(psc.fetchAllForecast())
+        psc.fetchAllForecast().forEach { forecast in
+            print("city \(forecast.city_id) forecast - \(forecast.weather_descr ?? "") temp - \(forecast.temp.description)")
+        }
+//        print(psc.fetchAllForecast())
     }
     
     func spider(_ spider: Spider,
                 didGet response: TempObjectStorageProtocol?,
                 error: Error?) {
-        
+        print("did get response", response ?? "response nil", error ?? "error nil")
+    }
+    
+    func spider(_ spider: Spider, didExecute task: URLSessionTask) {
+        print("did execute", task)
     }
     
     func spider(_ spider: Spider, didFinishExecuting operation: SpiderOperationType) {
+        print("did finish executing", operation)
 //        switch operation {
 //        case .writeInfo:
 //            let psc = self.spider.storageController as! PersistentStorageController

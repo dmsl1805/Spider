@@ -146,7 +146,9 @@ public class Spider: NSObject {
     public typealias SpiderOperationBlock = (_ dispatchGroup: DispatchGroup) -> Void
     public lazy var operations = [SpiderOperationBlock]()
     
-    private lazy var defaultQueue: DispatchQueue = DispatchQueue(label: "com.spider.defaultQueue")
+    public var delegateQueue: DispatchQueue = DispatchQueue(label: "com.spider.delegateQueue")
+    private let defaultQueue: DispatchQueue = DispatchQueue(label: "com.spider.defaultQueue")
+    private let executionQueue: DispatchQueue = DispatchQueue(label: "com.spider.executionQueue")
 
     //    internal lazy var downloadOperations = [SpiderOperation]()
 //    internal lazy var downloadEntities = [T]()
@@ -166,22 +168,22 @@ public class Spider: NSObject {
         operations.append{ [unowned self] group in
             group.wait()
             group.enter()
-            self.queue(forOperation: .sendRequest, entity: group.entityName).sync {
+            self.queue(forOperation: .sendRequest, entity: group.entityName).async {
                 let task = self.networkController.executeRequest(request ?? self.request!, response: { response, error in
-//                    self.delegateQueue.async {
-//                        self.delegate?.spider?(self, didGet: response, error: error)
-//                    }
+                    self.delegateQueue.sync {
+                        self.delegate?.spider?(self, didGet: response, error: error)
+                    }
                     if let resp = response {
                         group.objectsStorage = resp
                     }
-//                    self.delegateQueue.async {
-//                        self.delegate?.spider?(self, didFinishExecuting: .sendRequest)
-//                    }
+                    self.delegateQueue.sync {
+                        self.delegate?.spider?(self, didFinishExecuting: .sendRequest)
+                    }
                     group.leave()
                 })
-//                self.delegateQueue.async {
-//                    self.delegate?.spider?(self, didExecute: task)
-//                }
+                self.delegateQueue.sync {
+                    self.delegate?.spider?(self, didExecute: task)
+                }
             }
         }
         return self
@@ -191,11 +193,11 @@ public class Spider: NSObject {
         operations.append{ [unowned self] group in
             group.wait()
             group.enter()
-            self.queue(forOperation: .writeInfo, entity: group.entityName).sync {
+            self.queue(forOperation: .writeInfo, entity: group.entityName).async {
                 self.storageController.update!(group.entityName, with: group.objectsStorage)
-//                self.delegateQueue.async {
-//                    self.delegate?.spider?(self, didFinishExecuting: .writeInfo)
-//                }
+                self.delegateQueue.sync {
+                    self.delegate?.spider?(self, didFinishExecuting: .writeInfo)
+                }
                 group.leave()
             }
         }
@@ -206,39 +208,17 @@ public class Spider: NSObject {
         operations.append{ [unowned self] group in
             group.wait()
             group.enter()
-            self.queue(forOperation: .deleteInfo, entity: group.entityName).sync {
+            self.queue(forOperation: .deleteInfo, entity: group.entityName).async {
                 self.storageController.remove!(group.entityName, new: group.objectsStorage)
-//                self.delegateQueue.async {
-//                    self.delegate?.spider?(self, didFinishExecuting: .deleteInfo)
-//                }
+                self.delegateQueue.sync {
+                    self.delegate?.spider?(self, didFinishExecuting: .deleteInfo)
+                }
                 group.leave()
             }
         }
         return self
     }
-//    public func deleteInfo() -> Spider {
-//        let op = SpiderOperation { [unowned self] (operation) in
-//            self.delegateQueue.addOperation {
-//                if let terminate = self.delegate?.spider?(self, shouldTerminate: .getInfo), terminate == true {
-//                    self.delegate?.spider?(self, didFinishExecuting: .deleteInfo)
-//                    operation.finish()
-//                }
-//            }
-//            if let storage = operation.objectStorage {
-//                self.storageController.remove!(self.entityName, new: storage)
-//            }
-//            self.delegateQueue.addOperation {
-//                self.delegate?.spider?(self, didFinishExecuting: .deleteInfo)
-//            }
-//            operation.finish()
-//        }
-//        if let newDependency = operations.last {
-//            op.addDependency(newDependency)
-//        }
-//        operations.append(op)
-//        return self
-//    }
-    
+
 //    private func addDownloadOperations() {
 //        downloadEntities.forEach({ [unowned self] entity in
 //            guard entity.dataRemoutePaths != nil, entity.dataRemoutePaths!.count > 0  else { return }
@@ -277,12 +257,13 @@ public class Spider: NSObject {
     public func execute(forEntity entityName: String) {
         guard operations.count > 0 else { return }
         let group = DispatchGroup()
-        defaultQueue.async { [unowned self] in
+        executionQueue.async { [unowned self] in
             group.entityName = entityName
-            self.operations.forEach { operation in
+            let ops = self.operations
+            self.operations = [SpiderOperationBlock]()
+            ops.forEach { operation in
                 operation(group)
             }
-            self.operations = [SpiderOperationBlock]()
         }
     }
     
