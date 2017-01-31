@@ -27,11 +27,9 @@ import Foundation
     
     @objc static var entityName: String { get }
     
-    // Entity that contains some data (NSData, Image, ets.)
+    // Entity that contains some data (NSData, Image, ets.) <Name: URL>
     
-    //    @objc optional var dataRemoutePaths: [String] { get }
-    //
-    //    @objc optional var dataNames: [String] { get }
+    @objc optional var data: Dictionary<String, URL> { get }
     
 }
 
@@ -40,9 +38,9 @@ import Foundation
 
 @objc public protocol PersistentStorageControllerProtocol {
     
-    @objc optional func update(_ entityName: String, with objects: TempObjectStorageProtocol)
+    @objc optional func update(_ entityName: String, with objects: TempObjectStorageProtocol, callback: SpiderCallback)
     
-    @objc optional func remove(_ entityName: String, new objects: TempObjectStorageProtocol)
+    @objc optional func remove(_ entityName: String, new objects: TempObjectStorageProtocol, callback: SpiderCallback)
     
     //    @objc optional func fetchWithoutData(name: String) -> [EntityProtocol]?
     
@@ -70,11 +68,12 @@ import Foundation
 
 // MARK: Network manager
 
-public typealias NetworkResponseBlock = (_ objects: TempObjectStorageProtocol? , _ error: Error? ) -> (Void)
+public typealias SpiderNetworkResponseBlock = (_ objects: TempObjectStorageProtocol? , _ error: Error? ) -> (Void)
+public typealias SpiderCallback = () -> (Void)
 
 @objc public protocol NetworkControllerProtocol {
     
-    @objc func executeRequest(_ request: URLRequest, response: @escaping NetworkResponseBlock) -> URLSessionTask
+    @objc func executeRequest(_ request: URLRequest, response: @escaping SpiderNetworkResponseBlock) -> URLSessionTask
     
     //    @objc optional func download(from: String,
     //                                 response: NetworkDataResponseBlock) -> URLSessionTask
@@ -116,9 +115,9 @@ private var objectsStorageAssociationKey: UInt8 = 0
 private var entityNameAssociationKey: UInt8 = 0
 
 private extension DispatchGroup {
-    var objectsStorage: TempObjectStorageProtocol {
+    var objectsStorage: TempObjectStorageProtocol? {
         get {
-            return objc_getAssociatedObject(self, &objectsStorageAssociationKey) as! TempObjectStorageProtocol
+            return objc_getAssociatedObject(self, &objectsStorageAssociationKey) as? TempObjectStorageProtocol
         }
         set {
             objc_setAssociatedObject(self, &objectsStorageAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
@@ -166,8 +165,7 @@ public class Spider: NSObject {
             return self
         }
         operations.append{ [unowned self] group in
-            group.wait()
-            group.enter()
+            self.enter(group)
             self.queue(forOperation: .sendRequest, entity: group.entityName).async {
                 let task = self.networkController.executeRequest(request ?? self.request!, response: { response, error in
                     self.delegateQueue.sync {
@@ -176,10 +174,7 @@ public class Spider: NSObject {
                     if let resp = response {
                         group.objectsStorage = resp
                     }
-                    self.delegateQueue.sync {
-                        self.delegate?.spider?(self, didFinishExecuting: .sendRequest)
-                    }
-                    group.leave()
+                    self.leave(group, .sendRequest)
                 })
                 self.delegateQueue.sync {
                     self.delegate?.spider?(self, didExecute: task)
@@ -191,14 +186,13 @@ public class Spider: NSObject {
     
     public func writeInfo() -> Self {
         operations.append{ [unowned self] group in
-            group.wait()
-            group.enter()
-            self.queue(forOperation: .writeInfo, entity: group.entityName).async {
-                self.storageController.update!(group.entityName, with: group.objectsStorage)
-                self.delegateQueue.sync {
-                    self.delegate?.spider?(self, didFinishExecuting: .writeInfo)
-                }
+            self.enter(group)
+            guard let objectsStorage = group.objectsStorage else {
                 group.leave()
+                return
+            }
+            self.queue(forOperation: .writeInfo, entity: group.entityName).async {
+                self.storageController.update!(group.entityName, with: objectsStorage) { self.leave(group, .writeInfo) }
             }
         }
         return self
@@ -206,19 +200,30 @@ public class Spider: NSObject {
 
     public func deleteInfo() -> Self {
         operations.append{ [unowned self] group in
-            group.wait()
-            group.enter()
-            self.queue(forOperation: .deleteInfo, entity: group.entityName).async {
-                self.storageController.remove!(group.entityName, new: group.objectsStorage)
-                self.delegateQueue.sync {
-                    self.delegate?.spider?(self, didFinishExecuting: .deleteInfo)
-                }
+            self.enter(group)
+            guard let objectsStorage = group.objectsStorage else {
                 group.leave()
+                return
+            }
+            self.queue(forOperation: .deleteInfo, entity: group.entityName).async {
+                self.storageController.remove!(group.entityName, new: objectsStorage) { self.leave(group, .writeInfo) }
             }
         }
         return self
     }
 
+    private func leave(_ group: DispatchGroup, _ operation: SpiderOperationType ) {
+        self.delegateQueue.sync {
+            self.delegate?.spider?(self, didFinishExecuting: operation)
+        }
+        group.leave()
+    }
+    
+    private func enter(_ group: DispatchGroup) {
+        group.wait()
+        group.enter()
+    }
+    
 //    private func addDownloadOperations() {
 //        downloadEntities.forEach({ [unowned self] entity in
 //            guard entity.dataRemoutePaths != nil, entity.dataRemoutePaths!.count > 0  else { return }

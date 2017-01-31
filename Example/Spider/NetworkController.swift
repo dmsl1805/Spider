@@ -12,7 +12,7 @@ import Spider
 class NetworkController: NSObject, NetworkControllerProtocol {
     
     func executeRequest(_ request: URLRequest,
-                        response: @escaping NetworkResponseBlock) -> URLSessionTask {
+                        response: @escaping SpiderNetworkResponseBlock) -> URLSessionTask {
         
         logRequest(request)
         let task = URLSession.shared.dataTask(with: request, completionHandler: { [unowned self] (data, urlResponse, error) in
