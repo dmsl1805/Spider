@@ -9,15 +9,9 @@
 
 ## Example
 ```swift
-// Swift
-self.spider = Spider<T>(persistentStorageController,
-                        networkController: networkController,
-                        request: forecastUpdateHTTPRequest)
-self.spider.delegate = self
-
 //sends http request, handles response, deletes old data and writes a new one
 
-self.spider.sendRequest().deleteInfo().writeInfo().execute()
+self.spider.request().delete().write().execute()
 ```
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
@@ -85,7 +79,7 @@ Spider is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "Spider"
+pod 'Spider'
 ```
 
 ## Author
