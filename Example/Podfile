@@ -1,8 +1,15 @@
 use_frameworks!
 
-target 'Spider_Console_Example' do
-  pod 'Spider', :path => '../'
+def shared_pods
+  pod 'Spider’, :path => '../'
+end
 
+target 'Spider_Weather_App_Example' do
+shared_pods
+end
+
+target 'Spider_Console_Example' do
+	shared_pods
   target 'Spider_Tests' do
     inherit! :search_paths
     pod 'Quick'

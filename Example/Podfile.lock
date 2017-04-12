@@ -1,5 +1,5 @@
 PODS:
-  - Nimble (5.1.1)
+  - Nimble (6.0.1)
   - Quick (1.0.0)
   - Spider (0.1.0)
 
@@ -10,13 +10,13 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   Spider:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
-  Nimble: 415e3aa3267e7bc2c96b05fa814ddea7bb686a29
+  Nimble: 1527fd1bd2b4cf0636251a36bc8ab37e81da8347
   Quick: 8024e4a47e6cc03a9d5245ef0948264fc6d27cff
   Spider: b51e55b6c28c75d1d4b91811d2f6f8561596800e
 
-PODFILE CHECKSUM: 1eb580cd97e6b0272d98e26a5f3fbee520814eb1
+PODFILE CHECKSUM: e456d447fda19f4f74d2700672e63edf9ee13910
 
-COCOAPODS: 1.2.0.beta.3
+COCOAPODS: 1.2.0

@@ -9,8 +9,9 @@
 import UIKit
 import Spider
 
-class ViewController: UIViewController, SpiderDelegateProtocol {
-    
+class ViewController: UIViewController, SpiderDelegateProtocol, SpiderDataSourceProtocol {
+
+
     @IBOutlet var londonItem: UIBarButtonItem!
     @IBOutlet var minskItem: UIBarButtonItem!
     @IBOutlet var kievItem: UIBarButtonItem!
@@ -22,6 +23,8 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
         return req
     }
     
+    let imageRequest = URLRequest(url: URL(string: "http://eoimages.gsfc.nasa.gov/images/imagerecords/74000/74393/world.topo.200407.3x5400x2700.png")!)
+    
     lazy var spider: Spider = {
         let storageController = PersistentStorageController(modelName: "Model")
         let networkController = NetworkController()
@@ -31,6 +34,7 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         spider.delegate = self
+        spider.dataSource = self
         spider.delegateQueue = DispatchQueue.main
     }
     
@@ -44,7 +48,8 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
             break
         }
         /*deleteInfo().writeInfo().*/
-        spider.sendRequest(forecastUpdateRequest).deleteInfo().writeInfo().execute(forEntity: Forecast.entityName)
+        spider.request().delete().write().execute(forEntity: Forecast.entityName)
+//        spider.sendRequest(forecastUpdateRequest).deleteInfo().writeInfo().execute(forEntity: Forecast.entityName)
         
         
     }
@@ -76,6 +81,15 @@ class ViewController: UIViewController, SpiderDelegateProtocol {
 //        default:
 //            break;
 //        }
+    }
+    
+    func spider(_ spider: Spider, requestForOperation: SpiderOperationType, entity: String) -> DataRequestProtocol {
+        return forecastUpdateRequest
+
+    }
+
+    func spider(_ spider: Spider, didExecute task: DataTaskProtocol) {
+        //
     }
 
 }
