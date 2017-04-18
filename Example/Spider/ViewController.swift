@@ -48,7 +48,7 @@ class ViewController: UIViewController, SpiderDelegateProtocol, SpiderDataSource
             break
         }
         /*deleteInfo().writeInfo().*/
-        spider.request().delete().write().execute(forEntity: Forecast.entityName)
+        spider.request().delete().write().execute(forEntity: Forecast.self)
 //        spider.sendRequest(forecastUpdateRequest).deleteInfo().writeInfo().execute(forEntity: Forecast.entityName)
         
         
