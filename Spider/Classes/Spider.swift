@@ -202,11 +202,11 @@ public class Spider: NSObject {
         group.enter()
     }
  
-    public func execute(forEntity entityName: String) {
+    public func execute<Entity: EntityProtocol>(forEntity entity: Entity.Type) {
         guard operations.count > 0 else { return }
         let group = DispatchGroup()
         executionQueue.async { [unowned self] in
-            group.entityName = entityName
+            group.entityName = entity.entityName
             let ops = self.operations
             self.operations = [SpiderOperationBlock]()
             ops.forEach { operation in
