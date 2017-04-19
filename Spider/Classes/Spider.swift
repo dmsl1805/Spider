@@ -22,17 +22,15 @@ public protocol TempObjectStorageProtocol { }
 
 // Entity object. Can be subclass of NSManagedObject, or smth else
 
-public protocol EntityProtocol {
-    static var entityName: String { get }
-}
+public protocol EntityProtocol { }
 
 // Persistant storage controller. E.g. Core data stack controller or other.
 
 public protocol PersistentStorageControllerProtocol {
     
-    func update(_ entityNamed: String, with objects: TempObjectStorageProtocol, done: SpiderCallback)
+    func update(_ entity: EntityProtocol.Type, with objects: TempObjectStorageProtocol, done: SpiderCallback)
     
-    func remove(_ entityNamed: String, incoming objects: TempObjectStorageProtocol, done: SpiderCallback)
+    func remove(_ entity: EntityProtocol.Type, incoming objects: TempObjectStorageProtocol, done: SpiderCallback)
 }
 
 // MARK: Network manager
@@ -57,17 +55,17 @@ public protocol SpiderDelegateProtocol: class {
 
 public protocol SpiderDataSourceProtocol: class {
     
-    func spider(_ spider: Spider, requestForOperation: SpiderOperationType, entity: String) -> DataRequestProtocol
+    func spider(_ spider: Spider, requestForOperation: SpiderOperationType, entity: EntityProtocol.Type) -> DataRequestProtocol
 }
 
 public protocol SpiderQueueProviderProtocol: class {
     
-    func spider(_ spider: Spider, queueForOperation: SpiderOperationType, entity: String) -> DispatchQueue
+    func spider(_ spider: Spider, queueForOperation: SpiderOperationType, entity: EntityProtocol.Type) -> DispatchQueue
 }
 
 public protocol SpiderOperationTerminatorProtocol: class {
     
-    func spider(_ spider: Spider, shouldTerminate operation: SpiderOperationType, entity: String) -> Bool
+    func spider(_ spider: Spider, shouldTerminate operation: SpiderOperationType, entity: EntityProtocol.Type) -> Bool
 }
 
 fileprivate var objectsStorageAssociationKey: UInt8 = 0
@@ -81,9 +79,9 @@ private extension DispatchGroup {
             objc_setAssociatedObject(self, &objectsStorageAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
-    var entityName: String {
+    var entityType: EntityProtocol.Type {
         get {
-            return objc_getAssociatedObject(self, &entityNameAssociationKey) as! String
+            return objc_getAssociatedObject(self, &entityNameAssociationKey) as! EntityProtocol.Type
         }
         set {
             objc_setAssociatedObject(self, &entityNameAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
@@ -97,7 +95,7 @@ public class Spider: NSObject {
     private let executionQueue: DispatchQueue = DispatchQueue(label: "com.spider.executionQueue")
     
     public typealias SpiderOperationBlock = (_ dispatchGroup: DispatchGroup) -> Void
-    //You can modify "operations" before calling "execute".
+    //You can modify "operations" to add your custom before calling "execute".
     //But be aware - "operations" will be removed after "execute" was called
     public lazy var operations = [SpiderOperationBlock]()
     
@@ -121,12 +119,12 @@ public class Spider: NSObject {
     public func request() -> Self {
         operations.append{ [unowned self] group in
             self.enter(group)
-            self.queue(forOperation: .dataRequest, entity: group.entityName).async {
-                guard self.terminate(operation: .dataRequest, entity: group.entityName) == false else {
+            self.queue(forOperation: .dataRequest, entity: group.entityType).async {
+                guard self.terminate(operation: .dataRequest, entity: group.entityType) == false else {
                     self.log("terminated", .dataRequest)
                     return
                 }
-                if let request = self.dataSource?.spider(self, requestForOperation: .dataRequest, entity: group.entityName) {
+                if let request = self.dataSource?.spider(self, requestForOperation: .dataRequest, entity: group.entityType) {
                     let task = self.networkController.execute(request) { response, error in
                         self.delegateQueue.sync {
                             self.delegate?.spider(self, didGet: response, error: error)
@@ -151,7 +149,7 @@ public class Spider: NSObject {
     public func write() -> Self {
         operations.append{ [unowned self] group in
             self.enter(group)
-            guard self.terminate(operation: .dataRequest, entity: group.entityName) == false else {
+            guard self.terminate(operation: .dataRequest, entity: group.entityType) == false else {
                 self.log("terminated", .dataRequest)
                 return
             }
@@ -160,8 +158,8 @@ public class Spider: NSObject {
                 group.leave()
                 return
             }
-            self.queue(forOperation: .write, entity: group.entityName).async {
-                self.storageController.update(group.entityName, with: objectsStorage) {
+            self.queue(forOperation: .write, entity: group.entityType).async {
+                self.storageController.update(group.entityType, with: objectsStorage) {
                     self.leave(group, .write)
                 }
             }
@@ -172,7 +170,7 @@ public class Spider: NSObject {
     public func delete() -> Self {
         operations.append{ [unowned self] group in
             self.enter(group)
-            guard self.terminate(operation: .dataRequest, entity: group.entityName) == false else {
+            guard self.terminate(operation: .dataRequest, entity: group.entityType) == false else {
                 self.log("terminated", .dataRequest)
                 return
             }
@@ -181,8 +179,8 @@ public class Spider: NSObject {
                 group.leave()
                 return
             }
-            self.queue(forOperation: .delete, entity: group.entityName).async {
-                self.storageController.remove(group.entityName, incoming: objectsStorage) {
+            self.queue(forOperation: .delete, entity: group.entityType).async {
+                self.storageController.remove(group.entityType, incoming: objectsStorage) {
                     self.leave(group, .delete)
                 }
             }
@@ -206,7 +204,7 @@ public class Spider: NSObject {
         guard operations.count > 0 else { return }
         let group = DispatchGroup()
         executionQueue.async { [unowned self] in
-            group.entityName = entity.entityName
+            group.entityType = entity
             let ops = self.operations
             self.operations = [SpiderOperationBlock]()
             ops.forEach { operation in
@@ -215,11 +213,11 @@ public class Spider: NSObject {
         }
     }
     
-    private func queue(forOperation operation: SpiderOperationType, entity: String) -> DispatchQueue {
+    private func queue(forOperation operation: SpiderOperationType, entity: EntityProtocol.Type) -> DispatchQueue {
         return queueProvider?.spider(self, queueForOperation: operation, entity: entity) ?? defaultQueue
     }
     
-    private func terminate(operation: SpiderOperationType, entity: String) -> Bool {
+    private func terminate(operation: SpiderOperationType, entity: EntityProtocol.Type) -> Bool {
         return operationTerminator?.spider(self, shouldTerminate: operation, entity: entity) ?? false
     }
     
