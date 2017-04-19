@@ -47,10 +47,8 @@ class ViewController: UIViewController, SpiderDelegateProtocol, SpiderDataSource
         default:
             break
         }
-        /*deleteInfo().writeInfo().*/
+
         spider.request().delete().write().execute(forEntity: Forecast.self)
-//        spider.sendRequest(forecastUpdateRequest).deleteInfo().writeInfo().execute(forEntity: Forecast.entityName)
-        
         
     }
     
@@ -83,7 +81,7 @@ class ViewController: UIViewController, SpiderDelegateProtocol, SpiderDataSource
 //        }
     }
     
-    func spider(_ spider: Spider, requestForOperation: SpiderOperationType, entity: String) -> DataRequestProtocol {
+    func spider(_ spider: Spider, requestForOperation: SpiderOperationType, entity: EntityProtocol.Type) -> DataRequestProtocol {
         return forecastUpdateRequest
 
     }

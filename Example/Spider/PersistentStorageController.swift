@@ -74,56 +74,52 @@ class PersistentStorageController: NSObject {
     }
 }
 
+
 extension PersistentStorageController: PersistentStorageControllerProtocol {
     
-    func update(_ entityName: String, with objects: TempObjectStorageProtocol, done: () -> (Void)) {
-        switch entityName {
-        case Forecast.entityName:
-            let objects = objects as! NetworkResponse
-            let list = objects.objects["list"] as! Array<Dictionary<String, Any>>
-            list.forEach({ forecast in
-                let entity = insertEntity(entityName) as! Forecast
-                let dateTxt = forecast["dt_txt"] as! String
-                let format = DateFormatter()
-                format.dateFormat = "yyyy-mm-dd HH:mm:ss"
-                let date = format.date(from: dateTxt)
-                entity.date = date as NSDate?
-                
-                let city = objects.objects["city"] as! Dictionary<String, Any>
-                let cityId = city["id"] as! Int32
-                entity.city_id = cityId
-                
-                if let clouds = (forecast["clouds"] as? Dictionary<String, Any>)?["all"] as? Int16 {
-                    entity.clouds = clouds
-                }
-                if let rain = (forecast["rain"] as? Dictionary<String, Any>)?["3h"] as? Float {
-                    entity.rain = rain
-                }
-                if let snow = (forecast["snow"] as? Dictionary<String, Any>)?["3h"] as? Float {
-                    entity.snow = snow
-                }
-                if let temp = (forecast["main"] as? Dictionary<String, Any>)?["temp"] as? Float {
-                    entity.temp = temp
-                }
-                if let wind = (forecast["wind"] as? Dictionary<String, Any>)?["speed"] as? Float {
-                    entity.wind = wind
-                }
-                let weather = ((forecast["weather"] as? Array<Any>)?.first as? Dictionary<String, Any>)?["description"] as? String
-                entity.weather_descr = weather
-            })
-            
-            break
-        default:
-            print("Probably not valid entity name")
-            break
+    func update(_ entity: EntityProtocol.Type, with objects: TempObjectStorageProtocol, done: () -> (Void)) {
+        guard let forecastEntity = entity as? Forecast else {
+            return
         }
+        let objects = objects as! NetworkResponse
+        let list = objects.objects["list"] as! Array<Dictionary<String, Any>>
+        list.forEach({ forecast in
+            let entity = insertEntity(Forecast.entityName) as! Forecast
+            let dateTxt = forecast["dt_txt"] as! String
+            let format = DateFormatter()
+            format.dateFormat = "yyyy-mm-dd HH:mm:ss"
+            let date = format.date(from: dateTxt)
+            entity.date = date as NSDate?
+            
+            let city = objects.objects["city"] as! Dictionary<String, Any>
+            let cityId = city["id"] as! Int32
+            entity.city_id = cityId
+            
+            if let clouds = (forecast["clouds"] as? Dictionary<String, Any>)?["all"] as? Int16 {
+                entity.clouds = clouds
+            }
+            if let rain = (forecast["rain"] as? Dictionary<String, Any>)?["3h"] as? Float {
+                entity.rain = rain
+            }
+            if let snow = (forecast["snow"] as? Dictionary<String, Any>)?["3h"] as? Float {
+                entity.snow = snow
+            }
+            if let temp = (forecast["main"] as? Dictionary<String, Any>)?["temp"] as? Float {
+                entity.temp = temp
+            }
+            if let wind = (forecast["wind"] as? Dictionary<String, Any>)?["speed"] as? Float {
+                entity.wind = wind
+            }
+            let weather = ((forecast["weather"] as? Array<Any>)?.first as? Dictionary<String, Any>)?["description"] as? String
+            entity.weather_descr = weather
+        })
         
         save()
         done()
     }
     
-    func remove(_ entityName: String, incoming objects: TempObjectStorageProtocol, done: () -> (Void)) {
-        fetch(entityName)?.forEach({[unowned self] entity in
+    func remove(_ entity: EntityProtocol.Type, incoming objects: TempObjectStorageProtocol, done: () -> (Void)) {
+        fetch(Forecast.entityName)?.forEach({[unowned self] entity in
             let objectInBg = self.contextStore.background.object(with: (entity as! NSManagedObject).objectID)
             self.contextStore.background.delete(objectInBg)
         })
@@ -158,7 +154,7 @@ extension PersistentStorageController: PersistentStorageControllerProtocol {
             let results = try self.contextStore.main.fetch(request)
             return (results as! [EntityProtocol])
         } catch let error {
-            print("error while fetching with predicate \(predicate), from persistent store, error: \(error)")
+            print("error while fetching with predicate \(predicate?.description ?? "nil"), from persistent store, error: \(error)")
             return nil
         }
     }
@@ -173,65 +169,4 @@ extension Forecast: EntityProtocol {
     }
 }
 
-//class DefaultPersistentStorageController: PersistentStorageController, PersistentStorageControllerProtocol, DefaultPersistentStorageControllerProtocol {
-//    
-//    let parser: ObjectsParserProtocol
-//    let shouldOverrideExisting: Bool
-//    
-//    init(modelName name: String, parser: ObjectsParserProtocol, shouldOverrideExisting: Bool = true) {
-//        self.parser = parser
-//        self.shouldOverrideExisting = shouldOverrideExisting
-//        super.init(modelName: name)
-//    }
-//    
-//    // MARK: PersistentStorageControllerProtocol
-//    
-//    func update(name: String, with objects: TempObjectStorageProtocol) {
-//        
-//    }
-//    
-//    func remove(name: String, new objects: TempObjectStorageProtocol) {
-//        
-//    }
-//    
-//    func fetchWithoutData(name: String) -> [EntityProtocol]? {
-//        return [EntityProtocol]()
-//    }
-//    
-//    
-//    // MARK: Custom
-//    
-//    func getFirst<T: DefaultEntityProtocol>() -> EntityProtocol? {
-//        print(T.entityName)
-//        return fetch(entityName)?.first
-//    }
-//    
-//    func get(_ entityName: String, withID uniqueID: Any) -> DefaultEntityProtocol? {
-//        let predicate = NSPredicate(format: "%K == %@", <#T##args: CVarArg...##CVarArg#>)
-//    }
-//    
-//    func insert(_ entityName: String, withID uniqueID: Any) -> DefaultEntityProtocol {
-//        
-//    }
-//    
-//    func getOrInsert(_ entityName: String, withID uniqueID: Any) -> DefaultEntityProtocol {
-//        //
-//    }
-//    
-//    func fetch(_ entityName: String,
-//               withPredicate predicate: NSPredicate? = nil,
-//               andSort sortDescriptors: [NSSortDescriptor]? = nil) -> [DefaultEntityProtocol]? {
-//        let request = NSFetchRequest<NSFetchRequestResult>()
-//        request.entity = NSEntityDescription.entity(forEntityName: entityName, in: self.contextStore.main)
-//        request.predicate = predicate
-//        request.sortDescriptors = sortDescriptors
-//        do {
-//            let results = try self.contextStore.main.fetch(request)
-//            return (results as! [DefaultEntityProtocol])
-//        } catch let error {
-//            print("error while fetching with predicate \(predicate), from persistent store, error: \(error)")
-//            return nil
-//        }
-//    }
-//}
 
