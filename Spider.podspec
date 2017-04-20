@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Spider'
-  s.version          = '0.1.4'
+  s.version          = '0.1.5'
   s.summary          = 'Update models easily'
 #  s.swift-version    = '3.0'
 
