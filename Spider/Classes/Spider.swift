@@ -217,12 +217,12 @@ public class Spider: NSObject {
     }
     
     private func performWithStore(on group: DispatchGroup, operation: SpiderOperationType, block: @escaping (_ store: TempObjectStorageProtocol) -> Void) {
-        guard let store = group.objectsStorage else {
-            self.log("objectsStorage is nil", .delete)
-            group.leave()
-            return
-        }
         perform(on: group, operation: operation) {
+            guard let store = group.objectsStorage else {
+                self.log("objectsStorage is nil", .delete)
+                group.leave()
+                return
+            }
             block(store)
         }
     }
