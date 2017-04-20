@@ -89,6 +89,11 @@ class ViewController: UIViewController, SpiderDelegateProtocol, SpiderDataSource
     func spider(_ spider: Spider, didExecute task: DataTaskProtocol) {
         //
     }
-
+    
+    func spider(_ spider: Spider, willExecute operation: SpiderOperationType, execute: @escaping SpiderCallback) {
+        Thread.sleep(forTimeInterval: 2)
+        print(operation)
+        execute()
+    }
 }
 
