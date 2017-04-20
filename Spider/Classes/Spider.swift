@@ -6,7 +6,7 @@
 import Foundation
 
 public enum SpiderOperationType {
-    case dataRequest
+    case request
     case write
     case delete
 }
@@ -28,9 +28,9 @@ public protocol EntityProtocol { }
 
 public protocol PersistentStorageControllerProtocol {
     
-    func update(_ entity: EntityProtocol.Type, with objects: TempObjectStorageProtocol, done: SpiderCallback)
+    func update(_ entity: EntityProtocol.Type, with objects: TempObjectStorageProtocol, done: @escaping SpiderCallback)
     
-    func remove(_ entity: EntityProtocol.Type, incoming objects: TempObjectStorageProtocol, done: SpiderCallback)
+    func remove(_ entity: EntityProtocol.Type, incoming objects: TempObjectStorageProtocol, done: @escaping SpiderCallback)
 }
 
 // MARK: Network manager
@@ -44,29 +44,41 @@ public protocol NetworkControllerProtocol {
     func execute(_ dataRequest: DataRequestProtocol, response: @escaping SpiderNetworkResponseBlock) -> DataTaskProtocol
 }
 
+// MARK: Delegate
+
 public protocol SpiderDelegateProtocol: class {
     
     func spider(_ spider: Spider, didExecute task: DataTaskProtocol)
     
     func spider(_ spider: Spider, didGet response: TempObjectStorageProtocol?,  error: Error?)
     
+    func spider(_ spider: Spider, willExecute operation: SpiderOperationType, execute: @escaping SpiderCallback)
+    
     func spider(_ spider: Spider, didFinishExecuting operation: SpiderOperationType)
 }
+
+// MARK: Data source
 
 public protocol SpiderDataSourceProtocol: class {
     
     func spider(_ spider: Spider, requestForOperation: SpiderOperationType, entity: EntityProtocol.Type) -> DataRequestProtocol
 }
 
+// MARK: Queue provider
+
 public protocol SpiderQueueProviderProtocol: class {
     
     func spider(_ spider: Spider, queueForOperation: SpiderOperationType, entity: EntityProtocol.Type) -> DispatchQueue
 }
 
+// MARK: Operation terminator
+
 public protocol SpiderOperationTerminatorProtocol: class {
     
     func spider(_ spider: Spider, shouldTerminate operation: SpiderOperationType, entity: EntityProtocol.Type) -> Bool
 }
+
+// MARK: DispatchGroup with storage
 
 fileprivate var objectsStorageAssociationKey: UInt8 = 0
 fileprivate var entityNameAssociationKey: UInt8 = 0
@@ -105,9 +117,9 @@ public class Spider: NSObject {
     public weak var dataSource: SpiderDataSourceProtocol?
     public weak var queueProvider: SpiderQueueProviderProtocol?
     public weak var operationTerminator: SpiderOperationTerminatorProtocol?
-
+    
     public var delegateQueue: DispatchQueue = DispatchQueue(label: "com.spider.delegateQueue")
-
+    
     public var isLogsEnabled = false
     
     public init(_ storageController: PersistentStorageControllerProtocol,
@@ -118,13 +130,8 @@ public class Spider: NSObject {
     
     public func request() -> Self {
         operations.append{ [unowned self] group in
-            self.enter(group)
-            self.queue(forOperation: .dataRequest, entity: group.entityType).async {
-                guard self.terminate(operation: .dataRequest, entity: group.entityType) == false else {
-                    self.log("terminated", .dataRequest)
-                    return
-                }
-                if let request = self.dataSource?.spider(self, requestForOperation: .dataRequest, entity: group.entityType) {
+            self.perform(on: group, operation: .request) {
+                if let request = self.dataSource?.spider(self, requestForOperation: .request, entity: group.entityType) {
                     let task = self.networkController.execute(request) { response, error in
                         self.delegateQueue.sync {
                             self.delegate?.spider(self, didGet: response, error: error)
@@ -132,14 +139,14 @@ public class Spider: NSObject {
                         if let resp = response {
                             group.objectsStorage = resp
                         }
-                        self.leave(group, .dataRequest)
+                        self.leave(group, .request)
                     }
                     self.delegateQueue.sync {
                         self.delegate?.spider(self, didExecute: task)
                     }
                 } else {
-                    self.log("dataSource.requestForOperation - request is nil", .dataRequest)
-                    self.leave(group, .dataRequest)
+                    self.log("dataSource.requestForOperation - request is nil", .request)
+                    self.leave(group, .request)
                 }
             }
         }
@@ -148,58 +155,26 @@ public class Spider: NSObject {
     
     public func write() -> Self {
         operations.append{ [unowned self] group in
-            self.enter(group)
-            guard self.terminate(operation: .dataRequest, entity: group.entityType) == false else {
-                self.log("terminated", .dataRequest)
-                return
-            }
-            guard let objectsStorage = group.objectsStorage else {
-                self.log("objectsStorage is nil", .write)
-                group.leave()
-                return
-            }
-            self.queue(forOperation: .write, entity: group.entityType).async {
-                self.storageController.update(group.entityType, with: objectsStorage) {
+            self.performWithStore(on: group, operation: .write) { [unowned self] store in
+                self.storageController.update(group.entityType, with: store) {
                     self.leave(group, .write)
                 }
             }
         }
         return self
     }
-
+    
     public func delete() -> Self {
         operations.append{ [unowned self] group in
-            self.enter(group)
-            guard self.terminate(operation: .dataRequest, entity: group.entityType) == false else {
-                self.log("terminated", .dataRequest)
-                return
-            }
-            guard let objectsStorage = group.objectsStorage else {
-                self.log("objectsStorage is nil", .delete)
-                group.leave()
-                return
-            }
-            self.queue(forOperation: .delete, entity: group.entityType).async {
-                self.storageController.remove(group.entityType, incoming: objectsStorage) {
+            self.performWithStore(on: group, operation: .delete) { [unowned self] store in
+                self.storageController.remove(group.entityType, incoming: store) {
                     self.leave(group, .delete)
                 }
             }
         }
         return self
     }
-
-    private func leave(_ group: DispatchGroup, _ operation: SpiderOperationType ) {
-        self.delegateQueue.sync {
-            self.delegate?.spider(self, didFinishExecuting: operation)
-        }
-        group.leave()
-    }
     
-    private func enter(_ group: DispatchGroup) {
-        group.wait()
-        group.enter()
-    }
- 
     public func execute<Entity: EntityProtocol>(forEntity entity: Entity.Type) {
         guard operations.count > 0 else { return }
         let group = DispatchGroup()
@@ -213,12 +188,54 @@ public class Spider: NSObject {
         }
     }
     
+    private func leave(_ group: DispatchGroup, _ operation: SpiderOperationType ) {
+        self.delegateQueue.sync {
+            self.delegate?.spider(self, didFinishExecuting: operation)
+        }
+        group.leave()
+    }
+    
+    private func enter(_ group: DispatchGroup) {
+        group.wait()
+        group.enter()
+    }
+    
     private func queue(forOperation operation: SpiderOperationType, entity: EntityProtocol.Type) -> DispatchQueue {
         return queueProvider?.spider(self, queueForOperation: operation, entity: entity) ?? defaultQueue
     }
     
     private func terminate(operation: SpiderOperationType, entity: EntityProtocol.Type) -> Bool {
         return operationTerminator?.spider(self, shouldTerminate: operation, entity: entity) ?? false
+    }
+    
+    private func askDelegateOrExecute(operation: SpiderOperationType, block: @escaping SpiderCallback) {
+        if let delegate = self.delegate {
+            delegate.spider(self, willExecute: operation, execute: block)
+        } else {
+            block()
+        }
+    }
+    
+    private func performWithStore(on group: DispatchGroup, operation: SpiderOperationType, block: @escaping (_ store: TempObjectStorageProtocol) -> Void) {
+        perform(on: group, operation: operation) {
+            guard let store = group.objectsStorage else {
+                self.log("objectsStorage is nil", .delete)
+                group.leave()
+                return
+            }
+            block(store)
+        }
+    }
+    
+    private func perform(on group: DispatchGroup, operation: SpiderOperationType, block: @escaping SpiderCallback) {
+        self.enter(group)
+        self.queue(forOperation: operation, entity: group.entityType).async {
+            guard self.terminate(operation: operation, entity: group.entityType) == false else {
+                self.log("terminated ", operation)
+                return
+            }
+            self.askDelegateOrExecute(operation: operation, block: block)
+        }
     }
     
     private func log(_ message: String, _ operation: SpiderOperationType) {

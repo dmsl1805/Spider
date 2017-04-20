@@ -77,10 +77,8 @@ class PersistentStorageController: NSObject {
 
 extension PersistentStorageController: PersistentStorageControllerProtocol {
     
-    func update(_ entity: EntityProtocol.Type, with objects: TempObjectStorageProtocol, done: () -> (Void)) {
-        guard let forecastEntity = entity as? Forecast else {
-            return
-        }
+    func update(_ entity: EntityProtocol.Type, with objects: TempObjectStorageProtocol, done: @escaping () -> (Void)) {
+
         let objects = objects as! NetworkResponse
         let list = objects.objects["list"] as! Array<Dictionary<String, Any>>
         list.forEach({ forecast in
@@ -118,7 +116,7 @@ extension PersistentStorageController: PersistentStorageControllerProtocol {
         done()
     }
     
-    func remove(_ entity: EntityProtocol.Type, incoming objects: TempObjectStorageProtocol, done: () -> (Void)) {
+    func remove(_ entity: EntityProtocol.Type, incoming objects: TempObjectStorageProtocol, done: @escaping () -> (Void)) {
         fetch(Forecast.entityName)?.forEach({[unowned self] entity in
             let objectInBg = self.contextStore.background.object(with: (entity as! NSManagedObject).objectID)
             self.contextStore.background.delete(objectInBg)
